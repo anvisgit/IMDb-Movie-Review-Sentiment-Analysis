@@ -72,7 +72,7 @@ if uploaded:
             st.pyplot(figs)
         with tab1:
             st.subheader("LOGISTIC REGRESSION")
-            model = LogisticRegression(max_iter=400)
+            model = LogisticRegression(max_iter=1000, solver='liblinear')
             model.fit(trainvecx, trainy)
             ypred = model.predict(testvecx)
 
@@ -145,7 +145,7 @@ if uploaded:
             st.subheader("SVC")
             
     
-            model = LinearSVC(max_iter=5000, random_state=42)
+            model = LinearSVC(C=1.5, max_iter=5000, random_state=42)
             model.fit(trainvecx, trainy)
             ypred = model.predict(testvecx)
 
