@@ -38,7 +38,7 @@ st.write(
 )
 
 uploaded = st.button("DRUMROLLS PLEASE")
-tab0, tab1, tab2 , tab3= st.tabs(["Analysis","Logistic Regression", "Random Forest", "SVM"])
+tab0, tab1, tab2 , tab3= st.tabs(["Analysis","Logistic Regression", "Random Forest", "SVC"])
 
 if uploaded:
     df = load()
@@ -142,7 +142,7 @@ if uploaded:
             st.pyplot(fig2)
 
         with tab3:
-            st.subheader("SVM")
+            st.subheader("SVC")
             
     
             model = LinearSVC(max_iter=5000, random_state=42)
