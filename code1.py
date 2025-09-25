@@ -8,7 +8,10 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.svm import LinearSVC
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import precision_score, recall_score, f1_score, confusion_matrix, ConfusionMatrixDisplay, accuracy_score
-from wordcloud import WordCloud
+from wordcloud import WordCloud, STOPWORDS
+from sklearn.feature_extraction.text import ENGLISH_STOP_WORDS
+
+
 
 @st.cache_data
 def load():
@@ -56,20 +59,17 @@ if uploaded:
             st.subheader("WordCloud")
             good=" ".join(df[df["sentiment"]==1]["review"])
             bad=" ".join(df[df["sentiment"]==0]["review"])
-
             c1,c2=st.columns(2)
+
             with c1:
                 st.write("positive Reviews")
-                st.image(WordCloud(width=300, height=200, colormap="Greens").generate(good).to_array())
+                wc_good = WordCloud(width=400, height=300, colormap="Greens", background_color="black").generate(good)
+                st.image(wc_good.to_array())
             with c2:
                 st.write("Negative reviews")
-                st.image(WordCloud(width=300, height=200, colormap="Greens").generate(bad).to_array())
-            st.subheader("Sentiment Distributer Pie Chart")
-            count=df["sentiment"].value_counts()
-            figs,ax=plt.subplots()
-            ax.pie(count, labels=["Good reviews","Bad reviews"], colors=["Blue","Green"])
-            ax.axis("equal")
-            st.pyplot(figs)
+                wc_bad = WordCloud(width=400, height=300, colormap="Greens", background_color="black").generate(bad)
+                st.image(wc_bad.to_array())
+            
         with tab1:
             st.subheader("LOGISTIC REGRESSION")
             model = LogisticRegression(max_iter=1000, solver='liblinear')
@@ -80,30 +80,28 @@ if uploaded:
             st.write("Precision:", precision_score(testy, ypred, average='weighted'))
             st.write("Recall:", recall_score(testy, ypred, average='weighted'))
             st.write("F1 Score:", f1_score(testy, ypred, average='weighted'))
+            c1,c2=st.columns(2)
+            with c1:
+                st.subheader("Confusion Matrix")
+                cm = confusion_matrix(testy, ypred)
+                fig, ax = plt.subplots()
+                disp = ConfusionMatrixDisplay(confusion_matrix=cm)
+                disp.plot(cmap=plt.cm.Greens, ax=ax, colorbar=False)
+                st.pyplot(fig)
+            with c2:
+                st.subheader("Learning Curve")
+                train_sizes, train_scores, test_scores = learning_curve(model, trainvecx, trainy, cv=2, train_sizes=np.linspace(0.1, 1.0, 3), scoring='accuracy')
+                train_mean = np.mean(train_scores, axis=1)
+                test_mean = np.mean(test_scores, axis=1)
 
-            st.subheader("Confusion Matrix")
-            cm = confusion_matrix(testy, ypred)
-            fig, ax = plt.subplots()
-            disp = ConfusionMatrixDisplay(confusion_matrix=cm)
-            disp.plot(cmap=plt.cm.Greens, ax=ax, colorbar=False)
-            st.pyplot(fig)
-            st.markdown("---")
-
-            st.subheader("Learning Curve")
-            train_sizes, train_scores, test_scores = learning_curve(
-                model, trainvecx, trainy, cv=2, train_sizes=np.linspace(0.1, 1.0, 3), scoring='accuracy'
-            )
-            train_mean = np.mean(train_scores, axis=1)
-            test_mean = np.mean(test_scores, axis=1)
-
-            fig2, ax2 = plt.subplots()
-            ax2.plot(train_sizes, train_mean, label='Train Accuracy', color='green')
-            ax2.plot(train_sizes, test_mean, label='Test Accuracy', color='green')
-            ax2.set_xlabel("Training Samples")
-            ax2.set_ylabel("Accuracy")
-            ax2.set_title("Learning Curve")
-            ax2.legend()
-            st.pyplot(fig2)
+                fig2, ax2 = plt.subplots()
+                ax2.plot(train_sizes, train_mean, label='Train Accuracy', color='green')
+                ax2.plot(train_sizes, test_mean, label='Test Accuracy', color='green')
+                ax2.set_xlabel("Training Samples")
+                ax2.set_ylabel("Accuracy")
+                ax2.set_title("Learning Curve")
+                ax2.legend()
+                st.pyplot(fig2)
 
         with tab2:
             st.subheader("RANDOM FOREST")
@@ -117,29 +115,28 @@ if uploaded:
             st.write("Recall:", recall_score(testy, ypred, average='weighted'))
             st.write("F1 Score:", f1_score(testy, ypred, average='weighted'))
 
-            st.subheader("Confusion Matrix")
-            cm = confusion_matrix(testy, ypred)
-            fig, ax = plt.subplots()
-            disp = ConfusionMatrixDisplay(confusion_matrix=cm)
-            disp.plot(cmap=plt.cm.Greens, ax=ax, colorbar=False)
-            st.pyplot(fig)
-            st.markdown("---")
+            c1,c2=st.columns(2)
+            with c1:
+                st.subheader("Confusion Matrix")
+                cm = confusion_matrix(testy, ypred)
+                fig, ax = plt.subplots()
+                disp = ConfusionMatrixDisplay(confusion_matrix=cm)
+                disp.plot(cmap=plt.cm.Greens, ax=ax, colorbar=False)
+                st.pyplot(fig)
+            with c2:
+                st.subheader("Learning Curve")
+                train_sizes, train_scores, test_scores = learning_curve(model, trainvecx, trainy, cv=2, train_sizes=np.linspace(0.1, 1.0, 3), scoring='accuracy')
+                train_mean = np.mean(train_scores, axis=1)
+                test_mean = np.mean(test_scores, axis=1)
 
-            st.subheader("Learning Curve")
-            train_sizes, train_scores, test_scores = learning_curve(
-                model, trainvecx, trainy, cv=2, train_sizes=np.linspace(0.1, 1.0, 3), scoring='accuracy'
-            )
-            train_mean = np.mean(train_scores, axis=1)
-            test_mean = np.mean(test_scores, axis=1)
-
-            fig2, ax2 = plt.subplots()
-            ax2.plot(train_sizes, train_mean, label='Train Accuracy', color='green')
-            ax2.plot(train_sizes, test_mean, label='Test Accuracy', color='green')
-            ax2.set_xlabel("Training Samples")
-            ax2.set_ylabel("Accuracy")
-            ax2.set_title("Learning Curve")
-            ax2.legend()
-            st.pyplot(fig2)
+                fig2, ax2 = plt.subplots()
+                ax2.plot(train_sizes, train_mean, label='Train Accuracy', color='green')
+                ax2.plot(train_sizes, test_mean, label='Test Accuracy', color='green')
+                ax2.set_xlabel("Training Samples")
+                ax2.set_ylabel("Accuracy")
+                ax2.set_title("Learning Curve")
+                ax2.legend()
+                st.pyplot(fig2)
 
         with tab3:
             st.subheader("SVC")
@@ -153,26 +150,25 @@ if uploaded:
             st.write("Precision:", precision_score(testy, ypred, average='weighted'))
             st.write("Recall Score:", recall_score(testy, ypred, average='weighted'))
             st.write("F1 Score:", f1_score(testy, ypred, average='weighted'))
+            c1,c2=st.columns(2)
+            with c1:
+                st.subheader("Confusion Matrix")
+                cm = confusion_matrix(testy, ypred)
+                fig, ax = plt.subplots()
+                disp = ConfusionMatrixDisplay(confusion_matrix=cm)
+                disp.plot(cmap=plt.cm.Greens, ax=ax, colorbar=False)
+                st.pyplot(fig)
+            with c2:
+                st.subheader("Learning Curve")
+                train_sizes, train_scores, test_scores = learning_curve(model, trainvecx, trainy, cv=2, train_sizes=np.linspace(0.1, 1.0, 3), scoring='accuracy')
+                train_mean = np.mean(train_scores, axis=1)
+                test_mean = np.mean(test_scores, axis=1)
 
-            st.subheader("Confusion Matrix")
-            cm = confusion_matrix(testy, ypred)
-            fig, ax = plt.subplots()
-            disp = ConfusionMatrixDisplay(confusion_matrix=cm)
-            disp.plot(cmap=plt.cm.Greens, ax=ax, colorbar=False)
-            st.pyplot(fig)
-            st.markdown("---")
-
-            st.subheader("Learning Curve")
-            train_sizes, train_scores, test_scores = learning_curve(model, trainvecx, trainy, cv=2, train_sizes=np.linspace(0.1, 1.0, 3), scoring='accuracy')
-            train_mean = np.mean(train_scores, axis=1)
-            test_mean = np.mean(test_scores, axis=1)
-
-            fig2, ax2 = plt.subplots()
-            ax2.plot(train_sizes, train_mean, label='Train Accuracy', color='green')
-            ax2.plot(train_sizes, test_mean, label='Test Accuracy', color='green')
-            ax2.set_xlabel("Training Samples")
-            ax2.set_ylabel("Accuracy")
-            ax2.set_title("Learning Curve")
-            ax2.legend()
-            st.pyplot(fig2)
-
+                fig2, ax2 = plt.subplots()
+                ax2.plot(train_sizes, train_mean, label='Train Accuracy', color='green')
+                ax2.plot(train_sizes, test_mean, label='Test Accuracy', color='green')
+                ax2.set_xlabel("Training Samples")
+                ax2.set_ylabel("Accuracy")
+                ax2.set_title("Learning Curve")
+                ax2.legend()
+                st.pyplot(fig2)
