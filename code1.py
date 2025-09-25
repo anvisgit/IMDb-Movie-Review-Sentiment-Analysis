@@ -11,9 +11,6 @@ from sklearn.metrics import precision_score, recall_score, f1_score, confusion_m
 from sklearn.metrics import roc_curve, auc
 from wordcloud import WordCloud, STOPWORDS
 from sklearn.feature_extraction.text import ENGLISH_STOP_WORDS
-
-
-
 @st.cache_data
 def load():
     df = pd.read_csv("IMDB Dataset.csv")
@@ -42,7 +39,7 @@ st.write(
 )
 
 uploaded = st.button("DRUMROLLS PLEASE")
-tab0, tab1, tab2 , tab3,tab4= st.tabs(["Analysis","Logistic Regression", "Random Forest", "SVC","Ensemble"])
+tab0, tab1, tab2 , tab3= st.tabs(["Analysis","Logistic Regression", "Random Forest", "SVC",])
 
 if uploaded:
     df = load()
@@ -60,8 +57,9 @@ if uploaded:
             st.subheader("WordCloud")
             good=" ".join(df[df["sentiment"]==1]["review"])
             bad=" ".join(df[df["sentiment"]==0]["review"])
-            text = " ".join(good + bad)
-            wc=WordCloud(width=400, height=300, colormap="Greens", background_color="black").generate(text)
+            text = good + " " + bad
+
+            wc=WordCloud(width=700, height=600, colormap="Greens", background_color="black").generate(text)
             st.image(wc.to_array())
             
         with tab1:
@@ -199,5 +197,4 @@ if uploaded:
                 ax2.set_title("Learning Curve")
                 ax2.legend()
                 st.pyplot(fig2)
-        with tab4:
-            st.header("Ensemble")
+        
