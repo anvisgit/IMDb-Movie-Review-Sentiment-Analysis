@@ -2,7 +2,7 @@
 
 - **Interactive Dashboard**
   - Built with Streamlit.
-  - tabs: Analysis, Logistic Regression, Random Forest, and SVM.
+  - tabs: Analysis, Logistic Regression, Random Forest, SVC and ensemble.
   - Can switch between tabs to explore data and model performance.
 
 - **Text Exploration & WordClouds**
@@ -11,15 +11,14 @@
   - WordClouds are dynamically generated based on the dataset.
 
 - **Sentiment Distribution Visualization**
-  - Displays a **bar chart** and **pie chart** showing positive vs. negative reviews.
+  - Displays a **bar chart**  showing positive vs. negative reviews.
   - Provides a quick overview of the dataset’s sentiment balance.
 
 - **Machine Learning Models**
-  - **Logistic Regression, Random Forest, and Linear SVM** implemented for sentiment classification.
+  - **Logistic Regression, Random Forest, and SVC** implemented for sentiment classification.
   - Each model is trained on 70% of the dataset and tested on 30%.
   - - **Machine Learning Models**
   - Implements **Logistic Regression**, **Random Forest**, and **Linear SVM** for sentiment classification.
-  - Trains models on 70% of the dataset and evaluates on the remaining 30%.
   - Displays **performance metrics**:
     - **Logistic Regression**: Accuracy 89%
     - **Random Forest**: Accuracy 80%
@@ -30,6 +29,9 @@
     - Precision
     - Recall
     - F1 Score
+    - feature importance
+    - roc curve
+    - 
 
 - **Confusion Matrix**
   - Displays the confusion matrix for each model.
