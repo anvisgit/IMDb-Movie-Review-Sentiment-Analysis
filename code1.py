@@ -25,7 +25,6 @@ def prepare(df):
     trainvecx = vectorizer.fit_transform(trainx)
     testvecx = vectorizer.transform(testx)
     return vectorizer, trainvecx, testvecx, trainy, testy, trainx, testx
-
 st.set_page_config(page_title='Movie Review', page_icon="👾", layout='wide')
 st.header("IMDb Movie Review")
 st.markdown("---")
@@ -36,7 +35,6 @@ st.write(
     "It also allows users to train machine learning models and predict the sentiment "
     "of new reviews in real-time."
 )
-
 uploaded = st.button("DRUMROLLS PLEASE")
 tab0, tab1, tab2 , tab3= st.tabs(["Analysis","Logistic Regression", "Random Forest", "SVC"])
 
@@ -64,15 +62,11 @@ if uploaded:
             model = LogisticRegression(max_iter=1000, solver='liblinear')
             model.fit(trainvecx, trainy)
             ypred = model.predict(testvecx)
-            if hasattr(model, "predict_proba"):
-                yscore = model.predict_proba(testvecx)[:,1]
-            else:
-                yscore = model.decision_function(testvecx)
+            
             errors = pd.DataFrame({
                 "review": testx.reset_index(drop=True),
                 "true_sentiment": testy.reset_index(drop=True),
-                "predicted_sentiment": ypred,
-                "confidence_score": yscore
+                
             })
             errors = errors[errors['true_sentiment'] != errors['predicted_sentiment']]
             st.write(f"Number of misclassified reviews: {errors.shape[0]}")
