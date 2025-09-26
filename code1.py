@@ -66,6 +66,7 @@ if uploaded:
             errors = pd.DataFrame({
                 "review": testx.reset_index(drop=True),
                 "true_sentiment": testy.reset_index(drop=True),
+                "predicted_sentiment": ypred,
                 
             })
             errors = errors[errors['true_sentiment'] != errors['predicted_sentiment']]
